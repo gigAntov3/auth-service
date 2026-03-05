@@ -34,12 +34,16 @@ router = APIRouter(prefix="/auth", tags=["Auth"])
     status_code=status.HTTP_201_CREATED
 )
 async def register(
-    request: RegisterRequestSchema,
+    register_request: RegisterRequestSchema,
+    request: Request,
     use_case: Annotated[RegisterUserUseCase, Depends(get_register_use_case)],
     mapper: Annotated[RegisterSchemaMapper, Depends(get_register_schema_mapper)]
 ) -> RegisterResponseSchema:
     try:
-        dto = mapper.to_dto(request)
+        ip_address = request.client.host
+        user_agent = request.headers.get("user-agent")
+
+        dto = mapper.to_dto(register_request, ip_address, user_agent)
         result = await use_case.execute(dto)
         return mapper.to_schema(result)
         

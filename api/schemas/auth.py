@@ -10,8 +10,6 @@ class RegisterRequestSchema(BaseModel):
     last_name: str = Field(..., example="Smith")
     email: EmailStr = Field(..., example="alice@example.com")
     password: str = Field(..., example="StrongP@ssw0rd!")
-    ip_address: str = Field(..., example="192.168.0.1")
-    user_agent: str = Field(..., example="Mozilla/5.0 (Windows NT 10.0; Win64; x64)")
 
 
 class UserRegisterResponseSchema(BaseModel):

@@ -6,7 +6,7 @@ from datetime import datetime
 
 from domain.entities.refresh_token import RefreshTokenEntity
 from infrastructure.database.models.refresh_token import RefreshTokenModel
-from infrastructure.database.mappers import RefreshTokenMapper
+from infrastructure.database.mappers.refresh_token import RefreshTokenMapper
 
 class SQLAlchemyRefreshTokenRepository:
     """Репозиторий для refresh токенов"""

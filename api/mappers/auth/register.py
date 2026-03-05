@@ -12,14 +12,14 @@ from application.dtos.auth_dto import (
 
 class RegisterSchemaMapper:
     
-    def to_dto(self, request: RegisterRequestSchema) -> RegisterRequestDTO:
+    def to_dto(self, request: RegisterRequestSchema, ip_address: str, user_agent: str) -> RegisterRequestDTO:
         return RegisterRequestDTO(
             first_name=request.first_name,
             last_name=request.last_name,
             email=request.email,
             password=request.password,
-            ip_address=request.ip_address,
-            user_agent=request.user_agent
+            ip_address=ip_address,
+            user_agent=user_agent
         )
     
     def to_schema(self, response: RegisterResponseDTO) -> RegisterResponseSchema:

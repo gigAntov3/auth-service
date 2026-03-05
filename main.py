@@ -63,10 +63,6 @@ app.add_middleware(RateLimitMiddleware)
 # Подключение роутов
 app.include_router(api_router)
 
-# @app.get("/")
-# async def root():
-#     return {"message": settings.environment.app_name, "version": settings.environment.app_version, "testing": settings.environment.testing}
-
 
 if __name__ == "__main__":
     import uvicorn

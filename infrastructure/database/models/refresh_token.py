@@ -13,11 +13,11 @@ class RefreshTokenModel(Base):
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
     user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)
     token_hash = Column(String(255), unique=True, nullable=False, index=True)
+    ip_address = Column(String(45), nullable=True)
+    user_agent = Column(Text, nullable=True)
     expires_at = Column(DateTime, nullable=False)
     created_at = Column(DateTime, default=datetime.utcnow)
     revoked_at = Column(DateTime, nullable=True)
-    ip_address = Column(String(45), nullable=True)
-    user_agent = Column(Text, nullable=True)
     
     # Relationships
     user = relationship("UserModel", back_populates="refresh_tokens")

@@ -9,7 +9,7 @@ from sqlalchemy.exc import IntegrityError
 from domain.entities.user import UserEntity
 from domain.repositories.users import UserRepository
 from infrastructure.database.models.user import UserModel
-from infrastructure.database.mappers import UserMapper
+from infrastructure.database.mappers.users import UserMapper
 
 from infrastructure.database.exceptions import UserAlreadyExistsError
 

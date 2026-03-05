@@ -7,7 +7,10 @@ from sqlalchemy.ext.asyncio import (
 )
 from sqlalchemy.pool import NullPool
 
+from infrastructure.database.models.base import Base
+
 from config import settings
+
 
 class DatabaseManager:
     """Database connection manager"""
@@ -48,7 +51,6 @@ class DatabaseManager:
         
         # Создаем таблицы (для разработки)
         try:
-            from infrastructure.database.models.base import Base
             async with self.engine.begin() as conn:
                 await conn.run_sync(Base.metadata.create_all)
             print("✅ Database tables created/verified")
@@ -74,5 +76,5 @@ class DatabaseManager:
             finally:
                 await session.close()
 
-# Global database manager instance
+
 db_manager = DatabaseManager(settings.database.url)
