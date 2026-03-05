@@ -12,6 +12,13 @@ from infrastructure.services.sms_service import MockSMSService
 from infrastructure.database.unit_of_work import SQLAlchemyUnitOfWork
 from infrastructure.database.session import db_manager
 from application.exceptions import InvalidTokenError
+
+from api.dependencies.base import (
+    get_unit_of_work,
+    get_email_service,
+    get_sms_service,
+)
+
 from config import settings
 
 
@@ -26,17 +33,8 @@ def get_token_service():
         refresh_token_expire_days=settings.jwt.refresh_token_expire_days
     )
 
-def get_email_service():
-    return MockEmailService()
 
-def get_sms_service():
-    return MockSMSService()
-
-def get_unit_of_work():
-    return SQLAlchemyUnitOfWork(db_manager.session_factory)
-
-
-from application.use_cases.register_user import RegisterUserUseCase
+from application.use_cases.auth.register_user import RegisterUserUseCase
 from api.mappers.auth.register import RegisterSchemaMapper
 
 def get_register_use_case(
@@ -57,7 +55,7 @@ def get_register_schema_mapper():
     return RegisterSchemaMapper()
 
 
-from application.use_cases.login_user import LoginUserUseCase
+from application.use_cases.auth.login_user import LoginUserUseCase
 from api.mappers.auth.login import LoginSchemaMapper
 
 
@@ -77,7 +75,7 @@ def get_login_schema_mapper():
     return LoginSchemaMapper()
 
 
-from application.use_cases.logout_user import LogoutUserUseCase
+from application.use_cases.auth.logout_user import LogoutUserUseCase
 from api.mappers.auth.logout import LogoutSchemaMapper
 
 
@@ -95,7 +93,7 @@ def get_logout_schema_mapper():
     return LogoutSchemaMapper()
 
 
-from application.use_cases.refresh_user import RefreshUserUseCase
+from application.use_cases.auth.refresh_user import RefreshUserUseCase
 from api.mappers.auth.refresh import RefreshSchemaMapper
 
 
@@ -121,65 +119,63 @@ def get_refresh_schema_mapper():
 
 
 
-
-# --- Auth / Security ---
+from fastapi import Depends, HTTPException, status
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from typing import Annotated
+from uuid import UUID
 
 security = HTTPBearer()
-
-class TokenData(BaseModel):
-    """Данные из токена"""
-    user_id: UUID
-    company_id: Optional[UUID] = None
-    role: Optional[str] = None
-    permissions: list[str] = []
 
 
 async def get_current_user(
     credentials: Annotated[HTTPAuthorizationCredentials, Depends(security)],
-    token_service: JWTTokenService = Depends(get_token_service)
-) -> TokenData:
-    """Dependency для получения текущего пользователя из JWT"""
+    token_service: Annotated[JWTTokenService, Depends(get_token_service)],
+) -> UUID:
+
     token = credentials.credentials
 
     try:
         payload = token_service.verify_access_token(token)
-        user_id = payload.get("sub")
-        if not user_id:
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Invalid token payload"
-            )
-
-        return TokenData(
-            user_id=UUID(user_id),
-            company_id=UUID(payload["company_id"]) if payload.get("company_id") else None,
-            role=payload.get("role"),
-            permissions=payload.get("permissions", [])
-        )
-
     except InvalidTokenError as e:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail=str(e),
             headers={"WWW-Authenticate": "Bearer"},
         )
-    except Exception:
+
+    user_id = payload.get("sub")
+
+    if not user_id:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Could not validate credentials",
-            headers={"WWW-Authenticate": "Bearer"},
+            detail="Invalid token payload",
         )
 
+    return UUID(user_id)
 
-def require_permission(permission: str):
-    """Dependency для проверки прав доступа"""
-    async def permission_dependency(
-        current_user: Annotated[TokenData, Depends(get_current_user)]
-    ):
-        if permission not in current_user.permissions:
-            raise HTTPException(
-                status_code=status.HTTP_403_FORBIDDEN,
-                detail=f"Permission required: {permission}"
-            )
-        return current_user
-    return permission_dependency
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# def require_permission(permission: str):
+#     """Dependency для проверки прав доступа"""
+#     async def permission_dependency(
+#         current_user: Annotated[TokenData, Depends(get_current_user)]
+#     ):
+#         if permission not in current_user.permissions:
+#             raise HTTPException(
+#                 status_code=status.HTTP_403_FORBIDDEN,
+#                 detail=f"Permission required: {permission}"
+#             )
+#         return current_user
+#     return permission_dependency

@@ -4,6 +4,7 @@ from typing import Optional
 from uuid import UUID, uuid4
 
 from domain.value_objects.email import Email
+from domain.value_objects.phone import Phone
 from domain.value_objects.password import PasswordHash
 from domain.value_objects.user_type import UserType, UserTypeEnum
 
@@ -11,7 +12,7 @@ from domain.value_objects.user_type import UserType, UserTypeEnum
 class UserEntity:
     id: UUID
     email: Email
-    phone: Optional[str]
+    phone: Optional[Phone]
     password_hash: PasswordHash
     first_name: str
     last_name: str
@@ -38,7 +39,7 @@ class UserEntity:
         return cls(
             id=uuid4(),
             email=Email(email),
-            phone=phone,
+            phone=Phone(phone) if phone else None,
             password_hash=PasswordHash(password_hash),
             first_name=first_name,
             last_name=last_name,

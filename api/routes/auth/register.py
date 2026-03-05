@@ -13,7 +13,7 @@ from application.exceptions import (
     UserAlreadyExistsError,
     ValidationError,
 )
-from application.use_cases.register_user import RegisterUserUseCase
+from application.use_cases.auth.register_user import RegisterUserUseCase
 
 
 router = APIRouter(prefix="/register", tags=["Auth"])

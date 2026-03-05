@@ -49,15 +49,15 @@ class RegisterUserUseCase:
             # Создание токенов
             access_token = self.token_service.create_access_token(
                 user_id=str(user.id),
-                email=user.email.value,
-                first_name=user.first_name,
-                last_name=user.last_name
+                # email=user.email.value,
+                # first_name=user.first_name,
+                # last_name=user.last_name
             )
             
             refresh_token = self.token_service.create_refresh_token(
                 user_id=str(user.id)
             )
-
+            
             refresh_token_entity = RefreshTokenEntity.create(
                 user_id=user.id,
                 token_hash=refresh_token,
@@ -75,7 +75,7 @@ class RegisterUserUseCase:
             return RegisterResponseDTO(
                 access_token=access_token,
                 refresh_token=refresh_token,
-                expires_in=1800,
+                expires_in=settings.jwt.access_token_expire_minutes,
                 user_id=user.id,
                 first_name=user.first_name,
                 last_name=user.last_name,

@@ -21,23 +21,17 @@ class JWTTokenService(TokenService):
         self.access_token_expire_minutes = access_token_expire_minutes
         self.refresh_token_expire_days = refresh_token_expire_days
     
-    def create_access_token(self, user_id: str, email: str, first_name: str, last_name: str) -> str:
-        """Create JWT access token"""
-        token_payload = {
-            "sub": user_id,
-            "email": email,
-            "first_name": first_name,
-            "last_name": last_name
-        }
-
-        now = datetime.utcnow()
+    def create_access_token(self, user_id: str) -> str:
+        now = datetime.now()
         expire = now + timedelta(minutes=self.access_token_expire_minutes)
-        token_payload["exp"] = int(expire.timestamp())  # обязательно int
-        token_payload["iat"] = int(now.timestamp())     # обязательно int
-        token_payload["type"] = "access"
-
-        return jwt.encode(token_payload, self.secret_key, algorithm=self.algorithm)
-    
+        payload = {
+            "sub": user_id,
+            "exp": int(expire.timestamp()),
+            "iat": int(now.timestamp()),
+            "type": "access"
+        }
+        return jwt.encode(payload, self.secret_key, algorithm=self.algorithm)
+        
     def verify_access_token(self, token: str) -> Dict[str, Any]:
         """Verify and decode JWT access token"""
         try:
@@ -46,6 +40,8 @@ class JWTTokenService(TokenService):
                 self.secret_key,
                 algorithms=[self.algorithm]
             )
+
+            print(payload)
             
             # Check token type
             if payload.get("type") != "access":
@@ -57,22 +53,13 @@ class JWTTokenService(TokenService):
         except jwt.InvalidTokenError as e:
             raise InvalidTokenError(f"Invalid token: {str(e)}")
     
-    def generate_refresh_token(self) -> str:
-        """Generate a random refresh token"""
-        import secrets
-        return secrets.token_urlsafe(32)
-    
-    def generate_invitation_token(self) -> str:
-        """Generate a random invitation token"""
-        import secrets
-        return secrets.token_urlsafe(48)
-    
     def create_refresh_token(self, user_id: str) -> str:
-        """Create JWT refresh token"""
+        now = datetime.utcnow()
+        expire = now + timedelta(days=self.refresh_token_expire_days)
         payload = {
             "sub": user_id,
-            "exp": datetime.utcnow() + timedelta(days=self.refresh_token_expire_days),
-            "iat": datetime.utcnow(),
+            "exp": int(expire.timestamp()),
+            "iat": int(now.timestamp()),
             "type": "refresh"
         }
         return jwt.encode(payload, self.secret_key, algorithm=self.algorithm)

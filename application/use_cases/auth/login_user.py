@@ -38,9 +38,9 @@ class LoginUserUseCase:
             
             access_token = self.token_service.create_access_token(
                 user_id=str(user.id),
-                email=user.email.value,
-                first_name=user.first_name,
-                last_name=user.last_name
+                # email=user.email.value,
+                # first_name=user.first_name,
+                # last_name=user.last_name
             )
             
             refresh_token = self.token_service.create_refresh_token(

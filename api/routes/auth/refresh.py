@@ -13,7 +13,7 @@ from application.exceptions import (
     AuthenticationError,
     InvalidTokenError,
 )
-from application.use_cases.refresh_user import RefreshUserUseCase
+from application.use_cases.auth.refresh_user import RefreshUserUseCase
 
 
 router = APIRouter(prefix="/refresh", tags=["Auth"])

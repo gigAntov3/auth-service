@@ -11,13 +11,5 @@ class TokenService(ABC):
         pass
     
     @abstractmethod
-    def generate_refresh_token(self) -> str:
-        pass
-    
-    @abstractmethod
-    def generate_invitation_token(self) -> str:
-        pass
-
-    @abstractmethod
     def create_refresh_token(self, user_id: str) -> str:
         pass

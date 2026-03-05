@@ -13,7 +13,7 @@ from application.exceptions import (
     AccountNotActiveError,
     AuthenticationError,
 )
-from application.use_cases.login_user import LoginUserUseCase
+from application.use_cases.auth.login_user import LoginUserUseCase
 
 
 router = APIRouter(prefix="/login", tags=["Auth"])

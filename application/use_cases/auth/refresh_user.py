@@ -39,9 +39,9 @@ class RefreshUserUseCase:
             
             access_token = self.token_service.create_access_token(
                 user_id=str(refresh_token.user_id),
-                email=user.email.value,
-                first_name=user.first_name,
-                last_name=user.last_name
+                # email=user.email.value,
+                # first_name=user.first_name,
+                # last_name=user.last_name
             )
 
             return RefreshResponseDTO(

@@ -10,7 +10,7 @@ from api.mappers.auth.logout import LogoutSchemaMapper
 from api.schemas.auth.logout import LogoutRequestSchema
 from api.schemas import MessageResponseSchema
 
-from application.use_cases.logout_user import LogoutUserUseCase
+from application.use_cases.auth.logout_user import LogoutUserUseCase
 
 
 router = APIRouter(prefix="/logout", tags=["Auth"])

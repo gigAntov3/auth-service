@@ -1,9 +1,6 @@
 from dataclasses import dataclass
 from typing import Optional, List
 from uuid import UUID
-from datetime import datetime
-
-from domain.entities.user import UserEntity
 
 
 @dataclass

@@ -1,5 +1,7 @@
 from domain.entities.user import UserEntity
 from domain.value_objects.email import Email
+
+from domain.value_objects.phone import Phone
 from domain.value_objects.password import PasswordHash
 
 from domain.value_objects.user_type import UserType, UserTypeEnum
@@ -15,7 +17,7 @@ class UserMapper:
         return UserEntity(
             id=model.id,
             email=Email(model.email),
-            phone=model.phone,
+            phone=Phone(model.phone) if model.phone else None,
             password_hash=PasswordHash(model.password_hash),
             first_name=model.first_name,
             last_name=model.last_name,
@@ -32,7 +34,7 @@ class UserMapper:
         return UserModel(
             id=entity.id,
             email=entity.email.value,
-            phone=entity.phone,
+            phone=entity.phone.value if entity.phone else None,
             password_hash=entity.password_hash.value,
             first_name=entity.first_name,
             last_name=entity.last_name,
