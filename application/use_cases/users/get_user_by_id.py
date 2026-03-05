@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from typing import Optional
 from uuid import UUID
 
-from domain.interfaces.unit_of_work import UnitOfWork
+from application.interfaces.unit_of_work import UnitOfWork
 
 from application.dtos.users import UserResponseDTO
 from application.exceptions import AuthenticationError

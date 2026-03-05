@@ -1,6 +1,6 @@
 import logging
 from typing import Optional
-from application.interfaces.sms_service import SmsService
+from application.interfaces.services.sms_service import SmsService
 
 class MockSMSService(SmsService):
     """Заглушка для SMS сервиса (не требует реальной отправки)"""

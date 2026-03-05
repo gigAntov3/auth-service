@@ -2,8 +2,8 @@ from abc import ABC, abstractmethod
 from contextlib import asynccontextmanager
 from typing import AsyncGenerator
 
-from domain.repositories.users import UserRepository
-from domain.repositories.refresh_tokens import RefreshTokenRepository
+from application.interfaces.repositories.users import UserRepository
+from application.interfaces.repositories.refresh_tokens import RefreshTokenRepository
 
 
 class UnitOfWork(ABC):

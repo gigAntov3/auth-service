@@ -1,41 +1,52 @@
 from dataclasses import dataclass
 from typing import Optional
+from uuid import UUID
 
+from domain.entities.user import UserEntity
 from domain.entities.refresh_token import RefreshTokenEntity
+
+
+from domain.value_objects.role import Role
+from application.interfaces.password_hasher import PasswordHasher
 from application.interfaces.unit_of_work import UnitOfWork
 from application.interfaces.services.token_service import TokenService
-from application.interfaces.password_hasher import PasswordHasher
-from application.dtos.auth import LoginRequestDTO, LoginResponseDTO
-from application.exceptions import AuthenticationError, AccountNotActiveError
+from application.dtos.auth import RegisterRequestDTO, RegisterResponseDTO
+from application.interfaces.services.email_service import EmailService
+from application.interfaces.services.sms_service import SmsService
+from application.exceptions import UserAlreadyExistsError, ValidationError
 
 from config import settings
 
 @dataclass
-class LoginUserUseCase:
-    """Use case для входа пользователя"""
+class RegisterUserUseCase:
+    """Use case для регистрации нового пользователя"""
     
     uow: UnitOfWork
     password_hasher: PasswordHasher
     token_service: TokenService
+    email_service: EmailService
     
-    async def execute(
-        self,
-        dto: LoginRequestDTO,
-    ) -> LoginResponseDTO:
+    async def execute(self, dto: RegisterRequestDTO) -> RegisterResponseDTO:
         async with self.uow:
-            user = None
             if dto.email:
-                user = await self.uow.users.get_by_email(dto.email)
+                existing_user = await self.uow.users.get_by_email(dto.email)
+                if existing_user:
+                    raise UserAlreadyExistsError(f"User with email {dto.email} already exists")
             
-            if not user:
-                raise AuthenticationError("Invalid credentials")
+            password_hash = self.password_hasher.hash(dto.password) if dto.password else None
             
-            if not user.is_active:
-                raise AccountNotActiveError("Account is deactivated")
+            # Создание пользователя (доменная сущность)
+            user = UserEntity.create(
+                first_name=dto.first_name,
+                last_name=dto.last_name,
+                email=dto.email,
+                password_hash=password_hash
+            )
             
-            if not self.password_hasher.verify(dto.password, user.password_hash.value):
-                raise AuthenticationError("Invalid credentials")
+            # Сохранение пользователя
+            await self.uow.users.save(user)
             
+            # Создание токенов
             access_token = self.token_service.create_access_token(
                 user_id=str(user.id),
                 # email=user.email.value,
@@ -46,7 +57,7 @@ class LoginUserUseCase:
             refresh_token = self.token_service.create_refresh_token(
                 user_id=str(user.id)
             )
-
+            
             refresh_token_entity = RefreshTokenEntity.create(
                 user_id=user.id,
                 token_hash=refresh_token,
@@ -60,8 +71,8 @@ class LoginUserUseCase:
             )
             
             await self.uow.commit()
-            
-            return LoginResponseDTO(
+
+            return RegisterResponseDTO(
                 access_token=access_token,
                 refresh_token=refresh_token,
                 expires_in=1800,

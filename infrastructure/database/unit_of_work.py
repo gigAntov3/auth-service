@@ -2,7 +2,7 @@ from contextlib import asynccontextmanager
 from typing import AsyncGenerator, Optional
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
-from domain.interfaces.unit_of_work import UnitOfWork
+from application.interfaces.unit_of_work import UnitOfWork
 from infrastructure.database.repositories.users import SQLAlchemyUserRepository
 from infrastructure.database.repositories.refresh_token import SQLAlchemyRefreshTokenRepository
 

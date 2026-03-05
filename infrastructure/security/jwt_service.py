@@ -3,7 +3,7 @@ from typing import Dict, Any, Optional
 import jwt
 from jwt.exceptions import PyJWTError
 
-from domain.interfaces.token_service import TokenService
+from application.interfaces.services.token_service import TokenService
 from application.exceptions import InvalidTokenError
 
 class JWTTokenService(TokenService):

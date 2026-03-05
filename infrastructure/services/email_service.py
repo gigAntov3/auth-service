@@ -1,6 +1,6 @@
 import logging
 from typing import Optional
-from application.interfaces.email_service import EmailService
+from application.interfaces.services.email_service import EmailService
 
 class MockEmailService(EmailService):
     """Заглушка для email сервиса (не требует реальной отправки)"""

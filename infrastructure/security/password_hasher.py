@@ -1,5 +1,5 @@
 import bcrypt
-from domain.interfaces.password_hasher import PasswordHasher
+from application.interfaces.password_hasher import PasswordHasher
 
 class BcryptPasswordHasher(PasswordHasher):
     """Bcrypt implementation of password hashing"""

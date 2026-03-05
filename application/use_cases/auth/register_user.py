@@ -7,12 +7,12 @@ from domain.entities.refresh_token import RefreshTokenEntity
 
 
 from domain.value_objects.role import Role
-from domain.interfaces.password_hasher import PasswordHasher
-from domain.interfaces.unit_of_work import UnitOfWork
-from domain.interfaces.token_service import TokenService
+from application.interfaces.password_hasher import PasswordHasher
+from application.interfaces.unit_of_work import UnitOfWork
+from application.interfaces.services.token_service import TokenService
 from application.dtos.auth import RegisterRequestDTO, RegisterResponseDTO
-from application.interfaces.email_service import EmailService
-from application.interfaces.sms_service import SmsService
+from application.interfaces.services.email_service import EmailService
+from application.interfaces.services.sms_service import SmsService
 from application.exceptions import UserAlreadyExistsError, ValidationError
 
 from config import settings
