@@ -80,3 +80,17 @@ class SQLAlchemyRefreshTokenRepository:
             .where(RefreshTokenModel.expires_at < datetime.utcnow())
         )
         return result.rowcount
+    
+    async def delete(self, token: str) -> None:
+        """Удалить конкретный токен"""
+        await self.session.execute(
+            delete(RefreshTokenModel)
+            .where(RefreshTokenModel.token_hash == token)
+        )
+
+    async def delete_by_id(self, id: str) -> None:
+        """Удалить конкретный токен"""
+        await self.session.execute(
+            delete(RefreshTokenModel)
+            .where(RefreshTokenModel.id == id)
+        )

@@ -1,10 +1,10 @@
-from api.schemas.auth import (
+from api.schemas.auth.register import (
     RegisterRequestSchema,
     UserRegisterResponseSchema,
     RegisterResponseSchema,
 )
 
-from application.dtos.auth_dto import (
+from application.dtos.auth import (
     RegisterRequestDTO,
     RegisterResponseDTO,
 )
@@ -26,6 +26,7 @@ class RegisterSchemaMapper:
         return RegisterResponseSchema(
             access_token=response.access_token,
             refresh_token=response.refresh_token,
+            expires_in=response.expires_in,
             user=UserRegisterResponseSchema(
                 id=response.user_id,
                 first_name=response.first_name,

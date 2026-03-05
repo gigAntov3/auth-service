@@ -10,8 +10,8 @@ class RefreshTokenRepository(ABC):
         pass
 
     @abstractmethod
-    async def get_by_token(self, token: str) -> Optional[RefreshTokenEntity]:
-        """Найти токен по значению"""
+    async def get_by_hash(self, token_hash: str) -> Optional[RefreshTokenEntity]:
+        """Получить токен по хешу"""
         pass
 
     @abstractmethod
@@ -21,6 +21,11 @@ class RefreshTokenRepository(ABC):
 
     @abstractmethod
     async def delete(self, token: str) -> None:
+        """Удалить конкретный токен"""
+        pass
+
+    @abstractmethod
+    async def delete_by_id(self, id: str) -> None:
         """Удалить конкретный токен"""
         pass
 

@@ -14,7 +14,6 @@ from infrastructure.database.session import db_manager
 from application.exceptions import InvalidTokenError
 from config import settings
 
-# --- Core services ---
 
 def get_password_hasher():
     return BcryptPasswordHasher()
@@ -56,6 +55,71 @@ def get_register_use_case(
 
 def get_register_schema_mapper():
     return RegisterSchemaMapper()
+
+
+from application.use_cases.login_user import LoginUserUseCase
+from api.mappers.auth.login import LoginSchemaMapper
+
+
+def get_login_use_case(
+    uow: Annotated[SQLAlchemyUnitOfWork, Depends(get_unit_of_work)],
+    password_hasher: Annotated[BcryptPasswordHasher, Depends(get_password_hasher)],
+    token_service: Annotated[JWTTokenService, Depends(get_token_service)],
+) -> LoginUserUseCase:
+    return LoginUserUseCase(
+        uow=uow,
+        password_hasher=password_hasher,
+        token_service=token_service,
+    )
+
+
+def get_login_schema_mapper():
+    return LoginSchemaMapper()
+
+
+from application.use_cases.logout_user import LogoutUserUseCase
+from api.mappers.auth.logout import LogoutSchemaMapper
+
+
+def get_logout_use_case(
+    uow: Annotated[SQLAlchemyUnitOfWork, Depends(get_unit_of_work)],
+    token_service: Annotated[JWTTokenService, Depends(get_token_service)],
+) -> LogoutUserUseCase:
+    return LogoutUserUseCase(
+        uow=uow,
+        token_service=token_service,
+    )
+
+
+def get_logout_schema_mapper():
+    return LogoutSchemaMapper()
+
+
+from application.use_cases.refresh_user import RefreshUserUseCase
+from api.mappers.auth.refresh import RefreshSchemaMapper
+
+
+def get_refresh_use_case(
+    uow: Annotated[SQLAlchemyUnitOfWork, Depends(get_unit_of_work)],
+    token_service: Annotated[JWTTokenService, Depends(get_token_service)],
+) -> RefreshUserUseCase:
+    return RefreshUserUseCase(
+        uow=uow,
+        token_service=token_service,
+    )
+
+
+def get_refresh_schema_mapper():
+    return RefreshSchemaMapper()
+
+
+
+
+
+
+
+
+
 
 
 # --- Auth / Security ---

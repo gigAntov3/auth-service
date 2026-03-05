@@ -3,7 +3,7 @@ from typing import Dict, Any
 
 class TokenService(ABC):
     @abstractmethod
-    def create_access_token(self, payload: Dict[str, Any]) -> str:
+    def create_access_token(self, user_id: str, email: str, first_name: str, last_name: str) -> str:
         pass
     
     @abstractmethod
@@ -16,4 +16,8 @@ class TokenService(ABC):
     
     @abstractmethod
     def generate_invitation_token(self) -> str:
+        pass
+
+    @abstractmethod
+    def create_refresh_token(self, user_id: str) -> str:
         pass

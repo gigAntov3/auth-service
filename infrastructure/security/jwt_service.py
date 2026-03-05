@@ -21,18 +21,15 @@ class JWTTokenService(TokenService):
         self.access_token_expire_minutes = access_token_expire_minutes
         self.refresh_token_expire_days = refresh_token_expire_days
     
-    def create_access_token(self, payload: Dict[str, Any]) -> str:
+    def create_access_token(self, user_id: str, email: str, first_name: str, last_name: str) -> str:
         """Create JWT access token"""
-        token_payload = {}
+        token_payload = {
+            "sub": user_id,
+            "email": email,
+            "first_name": first_name,
+            "last_name": last_name
+        }
 
-        for key, value in payload.items():
-            # Превращаем value objects в строки, если нужно
-            if hasattr(value, "value"):  # например Email.value
-                token_payload[key] = value.value
-            else:
-                token_payload[key] = value
-
-        # Add expiration
         now = datetime.utcnow()
         expire = now + timedelta(minutes=self.access_token_expire_minutes)
         token_payload["exp"] = int(expire.timestamp())  # обязательно int
@@ -70,7 +67,7 @@ class JWTTokenService(TokenService):
         import secrets
         return secrets.token_urlsafe(48)
     
-    def create_refresh_token_payload(self, user_id: str) -> str:
+    def create_refresh_token(self, user_id: str) -> str:
         """Create JWT refresh token"""
         payload = {
             "sub": user_id,
@@ -79,3 +76,19 @@ class JWTTokenService(TokenService):
             "type": "refresh"
         }
         return jwt.encode(payload, self.secret_key, algorithm=self.algorithm)
+    
+    def verify_refresh_token(self, token: str) -> Dict[str, Any]:
+        """Verify and decode JWT refresh token"""
+        try:
+            payload = jwt.decode(
+                token,
+                self.secret_key,
+                algorithms=[self.algorithm]
+            )
+            if payload.get("type") != "refresh":
+                raise InvalidTokenError("Invalid token type")
+            return payload
+        except jwt.ExpiredSignatureError:
+            raise InvalidTokenError("Token has expired")
+        except jwt.InvalidTokenError as e:
+            raise InvalidTokenError(f"Invalid token: {str(e)}")

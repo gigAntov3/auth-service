@@ -10,7 +10,7 @@ from domain.value_objects.role import Role
 from domain.interfaces.password_hasher import PasswordHasher
 from domain.interfaces.unit_of_work import UnitOfWork
 from domain.interfaces.token_service import TokenService
-from application.dtos.auth_dto import RegisterRequestDTO, RegisterResponseDTO
+from application.dtos.auth import RegisterRequestDTO, RegisterResponseDTO
 from application.interfaces.email_service import EmailService
 from application.interfaces.sms_service import SmsService
 from application.exceptions import UserAlreadyExistsError, ValidationError
@@ -47,18 +47,20 @@ class RegisterUserUseCase:
             await self.uow.users.save(user)
             
             # Создание токенов
-            access_token = self.token_service.create_access_token({
-                "sub": str(user.id),
-                "email": user.email,
-                "first_name": user.first_name,
-                "last_name": user.last_name
-            })
+            access_token = self.token_service.create_access_token(
+                user_id=str(user.id),
+                email=user.email.value,
+                first_name=user.first_name,
+                last_name=user.last_name
+            )
             
-            refresh_token = self.token_service.generate_refresh_token()
+            refresh_token = self.token_service.create_refresh_token(
+                user_id=str(user.id)
+            )
 
             refresh_token_entity = RefreshTokenEntity.create(
                 user_id=user.id,
-                token_hash=self.password_hasher.hash(refresh_token),
+                token_hash=refresh_token,
                 expires_in_days=settings.jwt.refresh_token_expire_days,
                 ip_address=dto.ip_address,
                 user_agent=dto.user_agent
