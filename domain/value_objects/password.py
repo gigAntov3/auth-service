@@ -34,17 +34,17 @@ class RawPassword:
         if len(self.value) < 8:
             errors.append("минимум 8 символов")
         
-        if not any(c.isupper() for c in self.value):
-            errors.append("хотя бы одну заглавную букву")
+        # if not any(c.isupper() for c in self.value):
+        #     errors.append("хотя бы одну заглавную букву")
         
-        if not any(c.islower() for c in self.value):
-            errors.append("хотя бы одну строчную букву")
+        # if not any(c.islower() for c in self.value):
+        #     errors.append("хотя бы одну строчную букву")
         
-        if not any(c.isdigit() for c in self.value):
-            errors.append("хотя бы одну цифру")
+        # if not any(c.isdigit() for c in self.value):
+        #     errors.append("хотя бы одну цифру")
         
-        if not any(c in "!@#$%^&*" for c in self.value):
-            errors.append("хотя бы один спецсимвол (!@#$%^&*)")
+        # if not any(c in "!@#$%^&*" for c in self.value):
+        #     errors.append("хотя бы один спецсимвол (!@#$%^&*)")
         
         if errors:
             raise ValueError(f"Пароль должен содержать: {', '.join(errors)}")
