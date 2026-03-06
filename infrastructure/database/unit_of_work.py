@@ -5,6 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 from application.interfaces.unit_of_work import UnitOfWork
 from infrastructure.database.repositories.users import SQLAlchemyUserRepository
 from infrastructure.database.repositories.refresh_token import SQLAlchemyRefreshTokenRepository
+from infrastructure.database.repositories.verification_code import SqlAlchemyVerificationCodeRepository
 
 class SQLAlchemyUnitOfWork(UnitOfWork):
     """SQLAlchemy implementation of Unit of Work"""
@@ -20,6 +21,7 @@ class SQLAlchemyUnitOfWork(UnitOfWork):
         # Initialize repositories
         self._users = SQLAlchemyUserRepository(self.session)
         self._refresh_tokens = SQLAlchemyRefreshTokenRepository(self.session)
+        self._verification = SqlAlchemyVerificationCodeRepository(self.session)
         
         return self
     
@@ -50,6 +52,10 @@ class SQLAlchemyUnitOfWork(UnitOfWork):
     @property
     def refresh_tokens(self) -> SQLAlchemyRefreshTokenRepository:
         return self._refresh_tokens
+    
+    @property
+    def verification(self) -> SqlAlchemyVerificationCodeRepository:
+        return self._verification
     
 
 @asynccontextmanager

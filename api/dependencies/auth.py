@@ -111,8 +111,24 @@ def get_refresh_schema_mapper():
     return RefreshSchemaMapper()
 
 
+from application.use_cases.auth.request_verification import RequestVerificationUseCase
+from api.mappers.auth.request_verification import VerificationRequestSchemaMapper
 
 
+def get_request_verification_use_case(
+    uow: Annotated[SQLAlchemyUnitOfWork, Depends(get_unit_of_work)],
+    email_service: Annotated[MockEmailService, Depends(get_email_service)],
+    sms_service: Annotated[MockSMSService, Depends(get_sms_service)],
+) -> RequestVerificationUseCase:
+    return RequestVerificationUseCase(
+        uow=uow,
+        email_service=email_service,
+        sms_service=sms_service,
+    )
+
+
+def get_request_verification_schema_mapper():
+    return VerificationRequestSchemaMapper()
 
 
 
@@ -152,30 +168,3 @@ async def get_current_user(
         )
 
     return UUID(user_id)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# def require_permission(permission: str):
-#     """Dependency для проверки прав доступа"""
-#     async def permission_dependency(
-#         current_user: Annotated[TokenData, Depends(get_current_user)]
-#     ):
-#         if permission not in current_user.permissions:
-#             raise HTTPException(
-#                 status_code=status.HTTP_403_FORBIDDEN,
-#                 detail=f"Permission required: {permission}"
-#             )
-#         return current_user
-#     return permission_dependency

@@ -22,25 +22,11 @@ class SQLAlchemyUserRepository(UserRepository):
     
     async def save(self, user: UserEntity) -> None:
         """Save or update user"""
-        # Check if user exists
         existing = await self.get_by_id(user.id)
         
         if existing:
-            # Update existing
-            user_model = await self.session.get(UserModel, user.id)
-            if user_model:
-                user_model.email = user.email.value
-                user_model.phone = user.phone
-                user_model.password_hash = user.password_hash.value
-                user_model.first_name = user.first_name
-                user_model.last_name = user.last_name
-                user_model.role = user.role.type.value
-                user_model.is_email_verified = user.is_email_verified
-                user_model.is_phone_verified = user.is_phone_verified
-                user_model.is_active = user.is_active
-                user_model.updated_at = user.updated_at
+            self.mapper.update_model(user, user_model)
         else:
-            # Create new
             user_model = self.mapper.to_model(user)
             self.session.add(user_model)
         

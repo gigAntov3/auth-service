@@ -48,11 +48,12 @@ class UserMapper:
     
     @staticmethod
     def update_model(entity: UserEntity, model: UserModel) -> UserModel:
-        model.email = entity.email
+        model.email = entity.email.value
         model.phone = entity.phone
-        model.password_hash = entity.password_hash
+        model.password_hash = entity.password_hash.value
         model.first_name = entity.first_name
         model.last_name = entity.last_name
+        model.role = entity.role.type.value
         model.is_email_verified = entity.is_email_verified
         model.is_phone_verified = entity.is_phone_verified
         model.is_active = entity.is_active

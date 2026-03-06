@@ -17,14 +17,12 @@ class SQLAlchemyRefreshTokenRepository:
     
     async def save(self, token: RefreshTokenEntity) -> None:
         """Сохранить токен"""
-        existing = await self.get_by_id(token.id)
+        existing_user= await self.session.get(RefreshTokenModel, token.id)
         
-        if existing:
-            model = await self.session.get(RefreshTokenModel, token.id)
-            if model:
-                model.token_hash = token.token_hash.value
-                model.revoked_at = token.revoked_at
-                model.expires_at = token.expires_at
+        if existing_user:
+            model.token_hash = token.token_hash.value
+            model.revoked_at = token.revoked_at
+            model.expires_at = token.expires_at
         else:
             model = self.mapper.to_model(token)
             self.session.add(model)

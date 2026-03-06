@@ -43,3 +43,31 @@ class InvitationExpiredError(ApplicationError):
 class InvalidTokenError(ApplicationError):
     """Невалидный токен"""
     pass
+
+class VerificationError(Exception):
+    """Базовое исключение для ошибок верификации"""
+    pass
+
+class VerificationCodeNotFoundError(VerificationError):
+    """Код верификации не найден"""
+    pass
+
+class VerificationCodeExpiredError(VerificationError):
+    """Срок действия кода истек"""
+    pass
+
+class VerificationCodeAlreadyUsedError(VerificationError):
+    """Код уже был использован"""
+    pass
+
+class VerificationCodeInvalidError(VerificationError):
+    """Неверный код верификации"""
+    pass
+
+class TooManyAttemptsError(VerificationError):
+    """Превышено количество попыток"""
+    pass
+
+class RateLimitExceededError(VerificationError):
+    """Превышен лимит запросов"""
+    pass

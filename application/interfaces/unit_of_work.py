@@ -4,6 +4,7 @@ from typing import AsyncGenerator
 
 from application.interfaces.repositories.users import UserRepository
 from application.interfaces.repositories.refresh_tokens import RefreshTokenRepository
+from application.interfaces.repositories.verification_code import VerificationCodeRepository
 
 
 class UnitOfWork(ABC):
@@ -37,4 +38,10 @@ class UnitOfWork(ABC):
     @abstractmethod
     def refresh_tokens(self) -> RefreshTokenRepository:
         """Получить репозиторий токенов обновления"""
+        pass
+
+    @property
+    @abstractmethod
+    def verification(self) -> VerificationCodeRepository:
+        """Получить репозиторий кодов верификации"""
         pass
