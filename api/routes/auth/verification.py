@@ -2,37 +2,39 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, Request
 
-from api.schemas.auth.verification import (
+from api.schemas.verification import (
     VerificationRequestSchema,
-    VerificationRequestResponseSchema,
+    VerificationResponseSchema
 )
 from api.dependencies.auth import (
-    get_request_verification_use_case,
-    get_request_verification_schema_mapper,
+    get_verification_use_case,
+    get_verification_schema_mapper,
+    get_current_user_id,
 )
-from api.mappers.auth.request_verification import VerificationRequestSchemaMapper
+from api.mappers.auth.verification import VerificationSchemaMapper
 
-from application.use_cases.auth.request_verification import RequestVerificationUseCase
+from application.use_cases.auth.verification import RequestVerificationUseCase
 from application.exceptions import (
     RateLimitExceededError,
     ValidationError
 )
 
-router = APIRouter(prefix="/verification-request", tags=["Auth"])
+router = APIRouter(prefix="/verification", tags=["Auth"])
 
 
 @router.post(
     "", 
-    response_model=VerificationRequestResponseSchema
+    response_model=VerificationResponseSchema
 )
 async def request_verification(
-    verification_request: VerificationRequestSchema,
-    use_case: Annotated[RequestVerificationUseCase, Depends(get_request_verification_use_case)],
-    mapper: Annotated[VerificationRequestSchemaMapper, Depends(get_request_verification_schema_mapper)],
-) -> VerificationRequestResponseSchema:
+    verification: VerificationRequestSchema,
+    use_case: Annotated[RequestVerificationUseCase, Depends(get_verification_use_case)],
+    mapper: Annotated[VerificationSchemaMapper, Depends(get_verification_schema_mapper)],
+) -> VerificationResponseSchema:
     """Запрос кода верификации"""
     try:
-        result = await use_case.execute(mapper.to_dto(verification_request))
+        dto = mapper.to_dto(verification)
+        result = await use_case.execute(dto)
         return mapper.to_schema(result)
     except (RateLimitExceededError, ValidationError) as e:
         raise HTTPException(status_code=429 if isinstance(e, RateLimitExceededError) else 400, detail=str(e))

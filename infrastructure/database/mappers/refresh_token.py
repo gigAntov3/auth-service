@@ -20,7 +20,9 @@ class RefreshTokenMapper:
             created_at=model.created_at,
             revoked_at=model.revoked_at,
             ip_address=model.ip_address,
-            user_agent=model.user_agent
+            user_agent=model.user_agent,
+            device_name=model.device_name,
+            device_type=model.device_type
         )
         
         # Восстанавливаем состояние (не через __init__, а через атрибуты)
@@ -33,6 +35,8 @@ class RefreshTokenMapper:
         object.__setattr__(token, 'revoked_at', model.revoked_at)
         object.__setattr__(token, 'ip_address', model.ip_address)
         object.__setattr__(token, 'user_agent', model.user_agent)
+        object.__setattr__(token, 'device_name', model.device_name)
+        object.__setattr__(token, 'device_type', model.device_type)
         
         return token
     
@@ -50,7 +54,9 @@ class RefreshTokenMapper:
             created_at=entity.created_at,
             revoked_at=entity.revoked_at,
             ip_address=entity.ip_address,
-            user_agent=entity.user_agent
+            user_agent=entity.user_agent,
+            device_name=entity.device_name,
+            device_type=entity.device_type,
         )
     
     @staticmethod

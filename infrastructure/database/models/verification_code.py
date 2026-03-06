@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String, DateTime, Integer, Enum, Boolean, select, and_, desc
+from sqlalchemy import Column, String, DateTime, Integer, Enum, Boolean, select, and_, desc, ForeignKey
 from sqlalchemy.dialects.postgresql import UUID
 import uuid
 
@@ -13,6 +13,8 @@ class VerificationCodeModel(Base):
     __tablename__ = "verification_codes"
     
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)
+    
     identifier = Column(String(255), nullable=False, index=True)
     type = Column(Enum(VerificationType), nullable=False)
     code = Column(String(10), nullable=False)

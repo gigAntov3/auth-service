@@ -25,13 +25,16 @@ class SQLAlchemyUserRepository(UserRepository):
         existing = await self.get_by_id(user.id)
         
         if existing:
-            self.mapper.update_model(user, user_model)
+            user_model = await self.session.get(UserModel, user.id)
+            if user_model:
+                self.mapper.update_model(user, user_model)
         else:
             user_model = self.mapper.to_model(user)
             self.session.add(user_model)
         
         try:
             await self.session.flush()
+            return self.mapper.to_entity(user_model)
         except IntegrityError as e:
             raise UserAlreadyExistsError("User with this email or phone already exists") from e
     

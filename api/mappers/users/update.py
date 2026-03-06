@@ -1,13 +1,19 @@
-from application.dtos.users import (
-    UserResponseDTO,
-)
-from api.schemas.users import (
-    UserSchema
-)
+from uuid import UUID
+from application.dtos.users import UserResponseDTO, UserUpdateDTO
+from api.schemas.users import UserSchema, UserUpdateSchema
 
+class UserUpdateSchemaMapper:
+    
+    def to_dto(self, schema: UserUpdateSchema, current_user_id: UUID) -> UserUpdateDTO:
+        update_data = schema.model_dump(exclude_unset=True)
 
-class UserGetterSchemaMapper:
+        print(update_data)
 
+        return UserUpdateDTO(
+            user_id=current_user_id,
+            **update_data
+        )
+    
     def to_schema(self, dto: UserResponseDTO) -> UserSchema:
         return UserSchema(
             id=dto.user_id,

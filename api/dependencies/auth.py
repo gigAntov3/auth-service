@@ -111,11 +111,11 @@ def get_refresh_schema_mapper():
     return RefreshSchemaMapper()
 
 
-from application.use_cases.auth.request_verification import RequestVerificationUseCase
-from api.mappers.auth.request_verification import VerificationRequestSchemaMapper
+from application.use_cases.auth.verification import RequestVerificationUseCase
+from api.mappers.auth.verification import VerificationSchemaMapper
 
 
-def get_request_verification_use_case(
+def get_verification_use_case(
     uow: Annotated[SQLAlchemyUnitOfWork, Depends(get_unit_of_work)],
     email_service: Annotated[MockEmailService, Depends(get_email_service)],
     sms_service: Annotated[MockSMSService, Depends(get_sms_service)],
@@ -127,8 +127,25 @@ def get_request_verification_use_case(
     )
 
 
-def get_request_verification_schema_mapper():
-    return VerificationRequestSchemaMapper()
+def get_verification_schema_mapper():
+    return VerificationSchemaMapper()
+
+
+
+from application.use_cases.auth.verify import VerifyUseCase
+from api.mappers.auth.verify import VerifySchemaMapper
+
+
+def get_verify_use_case(
+    uow: Annotated[SQLAlchemyUnitOfWork, Depends(get_unit_of_work)],
+) -> VerifyUseCase:
+    return VerifyUseCase(
+        uow=uow,
+    )
+
+
+def get_verify_schema_mapper():
+    return VerifySchemaMapper()
 
 
 
@@ -140,10 +157,15 @@ from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from typing import Annotated
 from uuid import UUID
 
+from application.use_cases.users.get_user_by_id import UserGetterUseCase
+from api.dependencies.users import get_user_getter_use_case
+
+from application.dtos.users import UserResponseDTO
+
 security = HTTPBearer()
 
 
-async def get_current_user(
+async def get_current_user_id(
     credentials: Annotated[HTTPAuthorizationCredentials, Depends(security)],
     token_service: Annotated[JWTTokenService, Depends(get_token_service)],
 ) -> UUID:
@@ -168,3 +190,54 @@ async def get_current_user(
         )
 
     return UUID(user_id)
+
+
+async def get_current_user(
+    credentials: Annotated[HTTPAuthorizationCredentials, Depends(security)],
+    token_service: Annotated[JWTTokenService, Depends(get_token_service)],
+    use_case: Annotated[UserGetterUseCase, Depends(get_user_getter_use_case)],
+) -> UserResponseDTO:
+
+    token = credentials.credentials
+
+    try:
+        payload = token_service.verify_access_token(token)
+    except InvalidTokenError as e:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail=str(e),
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
+    user_id = payload.get("sub")
+
+    if not user_id:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid token payload",
+        )
+    
+    return await use_case.execute(UUID(user_id))
+
+
+async def get_refresh_token(
+    credentials: Annotated[HTTPAuthorizationCredentials, Depends(security)],
+    token_service: Annotated[JWTTokenService, Depends(get_token_service)],
+) -> UUID:
+
+    token = credentials.credentials
+
+    try:
+        token_service.verify_refresh_token(token)
+        return token
+
+    except InvalidTokenError as e:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail=str(e),
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    
+
+
+

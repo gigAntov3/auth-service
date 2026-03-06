@@ -1,6 +1,6 @@
 from datetime import datetime
 from uuid import uuid4
-from sqlalchemy import Column, String, Boolean, DateTime, ForeignKey, Table, Text, Integer
+from sqlalchemy import Column, String, Boolean, DateTime, Date, ForeignKey, Table, Text, Integer
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 
@@ -15,6 +15,8 @@ class UserModel(Base):
     password_hash = Column(String(255), nullable=True)
     first_name = Column(String(100), nullable=False)
     last_name = Column(String(100), nullable=False)
+    birthday = Column(Date, nullable=True)
+    gender = Column(String(10), nullable=True)
     role = Column(String(50), nullable=False, default="user")
     is_email_verified = Column(Boolean, default=False)
     is_phone_verified = Column(Boolean, default=False)

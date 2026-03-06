@@ -18,5 +18,8 @@ class Phone:
             raise ValueError(f"Некорректный номер телефона: {self.value}")
         
     def _is_valid(self) -> bool:
-        pattern = r'^\+7 \(\d{3}\) \d{3}-\d{2}-\d{2}$'
-        return bool(re.match(pattern, self.value))
+        # Удаляем все нецифровые символы кроме +
+        normalized = re.sub(r'[^\d+]', '', self.value)
+        # Проверяем что это +7 и 10 цифр после
+        pattern = r'^\+7\d{10}$'
+        return bool(re.match(pattern, normalized))

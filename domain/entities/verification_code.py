@@ -22,6 +22,7 @@ class VerificationCodeEntity(BaseModel):
     
     # --- Идентичность (Identity) ---
     id: UUID = Field(default_factory=uuid4)
+    user_id: UUID
     
     # --- Атрибуты ---
     identifier: str  # Email или номер телефона
@@ -50,12 +51,14 @@ class VerificationCodeEntity(BaseModel):
     @classmethod
     def create(
         cls,
+        user_id: UUID,
         identifier: str,
         type: VerificationType,
         max_attempts: int = 5,
     ) -> "VerificationCodeEntity":
         return cls(
             id=uuid4(),
+            user_id=user_id,
             identifier=identifier,
             type=VerificationType(type),
             code=VerificationCodeEntity._generate_verification_code(),

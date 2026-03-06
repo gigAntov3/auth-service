@@ -25,11 +25,13 @@ class UserGetterUseCase:
                 raise AuthenticationError("Invalid user_id")
             
             return UserResponseDTO(
-                id=user.id,
+                user_id=user.id,
                 first_name=user.first_name,
                 last_name=user.last_name,
                 email=user.email.value,
                 phone=user.phone.value if user.phone else None,
+                birthday=user.birthday,
+                gender=user.gender,
                 role=user.role.type.value,
                 is_email_verified=user.is_email_verified,
                 is_phone_verified=user.is_phone_verified,

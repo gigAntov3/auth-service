@@ -26,6 +26,7 @@ class RequestVerificationUseCase:
     async def execute(self, dto: VerificationRequestDTO) -> VerificationRequestResponseDTO:
         async with self.uow:
             verification_code = VerificationCodeEntity.create(
+                user_id=dto.user_id,
                 identifier=dto.identifier,
                 type=dto.identifier_type,
             )

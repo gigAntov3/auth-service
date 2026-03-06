@@ -5,7 +5,7 @@ from domain.entities.user import UserEntity
 
 class UserRepository(ABC):
     @abstractmethod
-    async def save(self, user: UserEntity) -> None:
+    async def save(self, user: UserEntity) -> UserEntity:
         pass
     
     @abstractmethod

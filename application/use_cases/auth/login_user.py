@@ -38,13 +38,18 @@ class LoginUserUseCase:
             
             access_token = self.token_service.create_access_token(
                 user_id=str(user.id),
-                # email=user.email.value,
-                # first_name=user.first_name,
-                # last_name=user.last_name
+                first_name=user.first_name,
+                last_name=user.last_name,
+                email=user.email.value,
+                role=user.role.type.value
             )
             
             refresh_token = self.token_service.create_refresh_token(
-                user_id=str(user.id)
+                user_id=str(user.id),
+                first_name=user.first_name,
+                last_name=user.last_name,
+                email=user.email.value,
+                role=user.role.type.value
             )
 
             refresh_token_entity = RefreshTokenEntity.create(
@@ -52,7 +57,9 @@ class LoginUserUseCase:
                 token_hash=refresh_token,
                 expires_in_days=settings.jwt.refresh_token_expire_days,
                 ip_address=dto.ip_address,
-                user_agent=dto.user_agent
+                user_agent=dto.user_agent,
+                device_name=dto.device_name,
+                device_type=dto.device_type
             )
             
             await self.uow.refresh_tokens.save(
@@ -64,10 +71,12 @@ class LoginUserUseCase:
             return LoginResponseDTO(
                 access_token=access_token,
                 refresh_token=refresh_token,
-                expires_in=1800,
+                expires_in=settings.jwt.access_token_expire_minutes,
                 user_id=user.id,
                 first_name=user.first_name,
                 last_name=user.last_name,
                 email=user.email.value,
-                role=user.role.type.value
+                role=user.role.type.value,
+                created_at=user.created_at,
+                updated_at=user.updated_at
             )

@@ -1,15 +1,15 @@
 from application.dtos.auth import (
+    DeviceInfoDTO,
     LogoutRequestDTO,
-)
-from api.schemas.auth.logout import (
-    LogoutRequestSchema
 )
 
 
 class LogoutSchemaMapper:
-    def to_dto(self, request: LogoutRequestSchema, ip_address: str, user_agent: str) -> LogoutRequestDTO:
+    def to_dto(self, refresh_token: str, device_info: DeviceInfoDTO) -> LogoutRequestDTO:
         return LogoutRequestDTO(
-            refresh_token=request.refresh_token,
-            ip_address=ip_address,
-            user_agent=user_agent
+            refresh_token=refresh_token,
+            ip_address=device_info.ip_address,
+            user_agent=device_info.user_agent,
+            device_name=device_info.device_name,
+            device_type=device_info.device_type
         )

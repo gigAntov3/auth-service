@@ -16,6 +16,7 @@ class VerificationCodeMapper:
         """Convert database model to domain entity."""
         return VerificationCodeEntity(
             id=model.id,
+            user_id=model.user_id,
             identifier=model.identifier,
             type=VerificationType(model.type.value) if isinstance(model.type, Enum) else VerificationType(model.type),
             code=model.code,
@@ -32,6 +33,7 @@ class VerificationCodeMapper:
         """Convert domain entity to database model."""
         return VerificationCodeModel(
             id=entity.id,
+            user_id=entity.user_id,
             identifier=entity.identifier,
             type=entity.type.value,
             code=entity.code,

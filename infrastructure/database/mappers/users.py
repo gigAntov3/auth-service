@@ -21,6 +21,8 @@ class UserMapper:
             password_hash=PasswordHash(model.password_hash),
             first_name=model.first_name,
             last_name=model.last_name,
+            birthday=model.birthday,
+            gender=model.gender,
             role=UserType(UserTypeEnum(model.role)),
             is_email_verified=model.is_email_verified,
             is_phone_verified=model.is_phone_verified,
@@ -38,6 +40,8 @@ class UserMapper:
             password_hash=entity.password_hash.value,
             first_name=entity.first_name,
             last_name=entity.last_name,
+            birthday=entity.birthday,
+            gender=entity.gender,
             role=entity.role.type.value,
             is_email_verified=entity.is_email_verified,
             is_phone_verified=entity.is_phone_verified,
@@ -49,10 +53,12 @@ class UserMapper:
     @staticmethod
     def update_model(entity: UserEntity, model: UserModel) -> UserModel:
         model.email = entity.email.value
-        model.phone = entity.phone
+        model.phone = entity.phone.value
         model.password_hash = entity.password_hash.value
         model.first_name = entity.first_name
         model.last_name = entity.last_name
+        model.birthday = entity.birthday
+        model.gender = entity.gender
         model.role = entity.role.type.value
         model.is_email_verified = entity.is_email_verified
         model.is_phone_verified = entity.is_phone_verified

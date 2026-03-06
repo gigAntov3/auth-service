@@ -13,17 +13,21 @@ class RefreshTokenEntity:
     expires_at: datetime
     created_at: datetime
     revoked_at: Optional[datetime]
-    ip_address: Optional[str]
-    user_agent: Optional[str]
+    ip_address: str
+    user_agent: str
+    device_name: str
+    device_type: str
     
     @classmethod
     def create(
         cls,
         user_id: UUID,
         token_hash: str,
+        ip_address: str,
+        user_agent: str,
+        device_name: str,
+        device_type: str,
         expires_in_days: int = 30,
-        ip_address: Optional[str] = None,
-        user_agent: Optional[str] = None
     ) -> 'RefreshTokenEntity':
         return cls(
             id=uuid4(),
@@ -33,7 +37,9 @@ class RefreshTokenEntity:
             created_at=datetime.utcnow(),
             revoked_at=None,
             ip_address=ip_address,
-            user_agent=user_agent
+            user_agent=user_agent,
+            device_name=device_name,
+            device_type=device_type
         )
     
     def revoke(self) -> None:

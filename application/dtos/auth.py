@@ -2,66 +2,61 @@ from dataclasses import dataclass
 from typing import Optional, List
 from uuid import UUID
 
+from application.dtos.users import UserPublicDTO
+
 
 @dataclass
-class RegisterRequestDTO:
+class DeviceInfoDTO:
+    ip_address: str
+    user_agent: str
+    device_name: str
+    device_type: str
+
+
+@dataclass
+class RegisterRequestDTO(DeviceInfoDTO):
     first_name: str
     last_name: str
     email: str
     password: str
-    ip_address: str
-    user_agent: str
-
-
-@dataclass
-class RegisterResponseDTO:
-    access_token: str
-    refresh_token: str
-    expires_in: int
-    user_id: UUID
-    first_name: str
-    last_name: str
-    email: str
-    role: Optional[str] = None
 
 
 
 @dataclass
-class LoginRequestDTO:
+class LoginRequestDTO(DeviceInfoDTO):
     email: str
     password: str
-    ip_address: str
-    user_agent: str
+
 
 @dataclass
-class LoginResponseDTO:
+class TokenResponseDTO:
     access_token: str
     refresh_token: str
     expires_in: int
-    user_id: UUID
-    first_name: str
-    last_name: str
-    email: str
-    role: Optional[str] = None
+    token_type: str = "Bearer"
+
+
+@dataclass
+class LoginResponseDTO(TokenResponseDTO, UserPublicDTO):
+    pass
+
+
+@dataclass
+class RegisterResponseDTO(TokenResponseDTO, UserPublicDTO):
+    pass
 
 
 
 @dataclass
-class LogoutRequestDTO: 
+class LogoutRequestDTO(DeviceInfoDTO): 
     refresh_token: str
-    ip_address: str
-    user_agent: str
 
 
 @dataclass
 class RefreshRequestDTO:
     refresh_token: str
-    ip_address: str
-    user_agent: str
 
 
 @dataclass
-class RefreshResponseDTO:
-    access_token: str
-    refresh_token: str
-    expires_in: int
+class RefreshResponseDTO(TokenResponseDTO):
+    pass

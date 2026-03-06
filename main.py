@@ -12,30 +12,23 @@ from config import settings
 from infrastructure.database.session import db_manager
 
 
-# Настройка логирования
-logging.basicConfig(
-    level=logging.INFO if not settings.environment.debug else logging.DEBUG,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-)
-logger = logging.getLogger(__name__)
+# # Настройка логирования
+# logging.basicConfig(
+#     level=logging.INFO if not settings.environment.debug else logging.DEBUG,
+#     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+# )
+# logger = logging.getLogger(__name__)
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Lifespan контекст для управления ресурсами"""
-    logger.info("Starting up...")
 
     await db_manager.initialize()
-
-    logger.info("Database connected")
-    
-    logger.info("Application started")
     
     yield
-    
-    logger.info("Shutting down...")
+
     await db_manager.close()
-    logger.info("Database disconnected")
 
 
 app = FastAPI(
@@ -43,7 +36,8 @@ app = FastAPI(
     description="Multi-tenant authentication service",
     version="1.0.0",
     lifespan=lifespan,
-    docs_url="/docs" if settings.environment.debug else None,
+    # docs_url="/docs" if settings.environment.debug else None,
+    docs_url="/docs",
     redoc_url="/redoc" if settings.environment.debug else None
 )
 
@@ -70,6 +64,6 @@ if __name__ == "__main__":
         "main:app",
         host="0.0.0.0",
         port=8000,
-        reload=settings.environment.debug,
+        reload=True,
         log_level="info"
     )

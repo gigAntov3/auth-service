@@ -6,41 +6,44 @@ from datetime import datetime
 @dataclass
 class VerificationRequestDTO:
     """DTO для запроса кода верификации"""
-    identifier: str  # email или телефон
-    identifier_type: str  # "email" или "phone"
+    email: Optional[str] = None
+    phone: Optional[str] = None
+
+    def __post_init__(self):
+        if not self.email and not self.phone:
+            raise ValueError("Either email or phone must be provided")
 
 @dataclass
 class VerificationRequestResponseDTO:
     """DTO для ответа на запрос верификации"""
-    verification_id: UUID
-    identifier: str
-    identifier_type: str
     expires_at: datetime
+    email: Optional[str] = None
+    phone: Optional[str] = None
+
+    def __post_init__(self):
+        if not self.email and not self.phone:
+            raise ValueError("Either email or phone must be provided")
+
+
 
 @dataclass
-class VerifyCodeDTO:
+class VerifyRequestDTO:
     """DTO для подтверждения кода"""
-    verification_id: UUID
     code: str
+    email: Optional[str] = None
+    phone: Optional[str] = None
+
+    def __post_init__(self):
+        if not self.email and not self.phone:
+            raise ValueError("Either email or phone must be provided")
+
 
 @dataclass
-class VerifyCodeResponseDTO:
-    """DTO для ответа на подтверждение"""
-    success: bool
-    identifier: str
-    type: str
-    message: str
+class VerifyResponseDTO:
+    """DTO для ответа на подтверждение кода"""
+    email: Optional[str] = None
+    phone: Optional[str] = None
 
-@dataclass
-class VerifyEmailDTO:
-    """DTO для верификации email при регистрации"""
-    email: str
-    code: str
-    user_id: Optional[UUID] = None  # если нужно связать с пользователем
-
-@dataclass
-class VerifyPhoneDTO:
-    """DTO для верификации телефона"""
-    phone: str
-    code: str
-    user_id: Optional[UUID] = None
+    def __post_init__(self):
+        if not self.email and not self.phone:
+            raise ValueError("Either email or phone must be provided")

@@ -15,6 +15,8 @@ class RefreshTokenModel(Base):
     token_hash = Column(String(255), unique=True, nullable=False, index=True)
     ip_address = Column(String(45), nullable=True)
     user_agent = Column(Text, nullable=True)
+    device_name = Column(String(100), nullable=True)
+    device_type = Column(String(50), nullable=True)
     expires_at = Column(DateTime, nullable=False)
     created_at = Column(DateTime, default=datetime.utcnow)
     revoked_at = Column(DateTime, nullable=True)

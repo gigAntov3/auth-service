@@ -6,7 +6,7 @@ class EnvironmentSettings(BaseModel):
 
     environment: str = "development"
 
-    debug: bool = True
+    debug: bool = False
     testing: bool = False
 
     log_level: str = "INFO"

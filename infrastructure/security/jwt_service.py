@@ -21,11 +21,15 @@ class JWTTokenService(TokenService):
         self.access_token_expire_minutes = access_token_expire_minutes
         self.refresh_token_expire_days = refresh_token_expire_days
     
-    def create_access_token(self, user_id: str) -> str:
+    def create_access_token(self, user_id: str, first_name: str, last_name: str, email: str, role: str) -> str:
         now = datetime.now()
         expire = now + timedelta(minutes=self.access_token_expire_minutes)
         payload = {
             "sub": user_id,
+            "first_name": first_name,
+            "last_name": last_name,
+            "email": email,
+            "role": role,
             "exp": int(expire.timestamp()),
             "iat": int(now.timestamp()),
             "type": "access"
@@ -53,11 +57,15 @@ class JWTTokenService(TokenService):
         except jwt.InvalidTokenError as e:
             raise InvalidTokenError(f"Invalid token: {str(e)}")
     
-    def create_refresh_token(self, user_id: str) -> str:
+    def create_refresh_token(self, user_id: str, first_name: str, last_name: str, email: str, role: str) -> str:
         now = datetime.utcnow()
         expire = now + timedelta(days=self.refresh_token_expire_days)
         payload = {
             "sub": user_id,
+            "first_name": first_name,
+            "last_name": last_name,
+            "email": email,
+            "role": role,
             "exp": int(expire.timestamp()),
             "iat": int(now.timestamp()),
             "type": "refresh"

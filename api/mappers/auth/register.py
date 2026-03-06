@@ -1,37 +1,34 @@
-from api.schemas.auth.register import (
+from api.schemas.auth import (
     RegisterRequestSchema,
-    UserRegisterResponseSchema,
     RegisterResponseSchema,
 )
-
+from api.schemas.users import UserPublicSchema
 from application.dtos.auth import (
     RegisterRequestDTO,
     RegisterResponseDTO,
+    DeviceInfoDTO,
 )
 
 
 class RegisterSchemaMapper:
     
-    def to_dto(self, request: RegisterRequestSchema, ip_address: str, user_agent: str) -> RegisterRequestDTO:
+    def to_dto(self, schema: RegisterRequestSchema, device_info: DeviceInfoDTO) -> RegisterRequestDTO:
         return RegisterRequestDTO(
-            first_name=request.first_name,
-            last_name=request.last_name,
-            email=request.email,
-            password=request.password,
-            ip_address=ip_address,
-            user_agent=user_agent
+            first_name=schema.first_name,
+            last_name=schema.last_name,
+            email=schema.email,
+            password=schema.password,
+            ip_address=device_info.ip_address,
+            user_agent=device_info.user_agent,
+            device_name=device_info.device_name,
+            device_type=device_info.device_type
         )
     
-    def to_schema(self, response: RegisterResponseDTO) -> RegisterResponseSchema:
+    
+    def to_schema(self, dto: RegisterResponseDTO) -> RegisterResponseSchema:
         return RegisterResponseSchema(
-            access_token=response.access_token,
-            refresh_token=response.refresh_token,
-            expires_in=response.expires_in,
-            user=UserRegisterResponseSchema(
-                id=response.user_id,
-                first_name=response.first_name,
-                last_name=response.last_name,
-                email=response.email,
-                role=response.role,
-            )
+            access_token=dto.access_token,
+            refresh_token=dto.refresh_token,
+            token_type=dto.token_type,
+            expires_in=dto.expires_in,
         )
