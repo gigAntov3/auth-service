@@ -24,7 +24,6 @@ class RegisterUserUseCase:
     uow: UnitOfWork
     password_hasher: PasswordHasher
     token_service: TokenService
-    email_service: EmailService
     
     async def execute(self, dto: RegisterRequestDTO) -> RegisterResponseDTO:
         async with self.uow:

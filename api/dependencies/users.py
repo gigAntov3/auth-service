@@ -13,21 +13,25 @@ from api.mappers.users.update import UserUpdateSchemaMapper
 from api.dependencies.base import get_unit_of_work
 
 
-def get_user_getter_use_case(
-    uow: Annotated[SQLAlchemyUnitOfWork, Depends(get_unit_of_work)],
-) -> UserGetterUseCase:
-    return UserGetterUseCase(uow=uow)
+class UsersMappersDependencies:
+    @staticmethod
+    def getter() -> UserGetterSchemaMapper:
+        return UserGetterSchemaMapper()
+    
+    @staticmethod
+    def update() -> UserUpdateSchemaMapper:
+        return UserUpdateSchemaMapper()
+    
 
-
-def get_user_getter_schema_mapper():
-    return UserGetterSchemaMapper()
-
-
-def get_user_update_use_case(
-    uow: Annotated[SQLAlchemyUnitOfWork, Depends(get_unit_of_work)],
-) -> UpdateUserUseCase:
-    return UpdateUserUseCase(uow=uow)
-
-
-def get_user_update_schema_mapper():
-    return UserUpdateSchemaMapper()
+class UsersUseCaseDependencies:
+    @staticmethod
+    def getter(
+        uow: Annotated[SQLAlchemyUnitOfWork, Depends(get_unit_of_work)],
+    ) -> UserGetterUseCase:
+        return UserGetterUseCase(uow=uow)
+    
+    @staticmethod
+    def update(
+        uow: Annotated[SQLAlchemyUnitOfWork, Depends(get_unit_of_work)],
+    ) -> UpdateUserUseCase:
+        return UpdateUserUseCase(uow=uow)

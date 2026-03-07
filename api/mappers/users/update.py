@@ -7,8 +7,6 @@ class UserUpdateSchemaMapper:
     def to_dto(self, schema: UserUpdateSchema, current_user_id: UUID) -> UserUpdateDTO:
         update_data = schema.model_dump(exclude_unset=True)
 
-        print(update_data)
-
         return UserUpdateDTO(
             user_id=current_user_id,
             **update_data

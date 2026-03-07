@@ -44,8 +44,6 @@ class JWTTokenService(TokenService):
                 self.secret_key,
                 algorithms=[self.algorithm]
             )
-
-            print(payload)
             
             # Check token type
             if payload.get("type") != "access":

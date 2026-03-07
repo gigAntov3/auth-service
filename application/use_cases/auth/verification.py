@@ -16,7 +16,7 @@ from config import settings
 
 
 @dataclass
-class RequestVerificationUseCase:
+class VerificationUseCase:
     """Use case для запроса кода верификации"""
     
     uow: UnitOfWork
@@ -40,8 +40,6 @@ class RequestVerificationUseCase:
                 )
             
             saved_code = await self.uow.verification.save(verification_code)
-            
-            print(saved_code.type == VerificationType.EMAIL)
     
             if saved_code.type == VerificationType.EMAIL:
                 await self.email_service.send_verification_code(
