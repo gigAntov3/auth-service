@@ -2,7 +2,7 @@ from uuid import UUID
 
 from application.dtos.verification import (
     VerificationRequestDTO,
-    VerificationRequestResponseDTO,
+    VerificationResponseDTO,
 )
 from api.schemas.verification import (
     VerificationRequestSchema,
@@ -11,14 +11,15 @@ from api.schemas.verification import (
 
 
 class VerificationSchemaMapper:
-    def to_dto(self, schema: VerificationRequestSchema) -> VerificationRequestDTO:
+    def to_dto(self, schema: VerificationRequestSchema, current_user_id: UUID) -> VerificationRequestDTO:
         return VerificationRequestDTO(
+            current_user_id=current_user_id,
             email=schema.email,
             phone=schema.phone
         )
     
 
-    def to_schema(self, dto: VerificationRequestResponseDTO) -> VerificationResponseSchema:
+    def to_schema(self, dto: VerificationResponseDTO) -> VerificationResponseSchema:
         return VerificationResponseSchema(
             success=True,
             email=dto.email,

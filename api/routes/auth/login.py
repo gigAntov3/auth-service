@@ -24,7 +24,8 @@ router = APIRouter(prefix="/login", tags=["Auth"])
 @router.post(
     "",
     response_model=LoginResponseSchema,
-    status_code=status.HTTP_200_OK
+    status_code=status.HTTP_200_OK,
+    summary="Вход в систему"
 )
 async def login(
     login: LoginRequestSchema,

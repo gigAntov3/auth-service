@@ -1,4 +1,5 @@
 from typing import Annotated
+from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException
 
@@ -9,6 +10,7 @@ from api.schemas.verification import (
 from api.dependencies.auth import (
     get_verify_use_case,
     get_verify_schema_mapper,
+    get_current_user_id,
 )
 from api.mappers.auth.verify import VerifySchemaMapper
 
@@ -23,16 +25,19 @@ router = APIRouter(prefix="/verify", tags=["Auth"])
 
 @router.post(
     "", 
-    response_model=VerifyResponseSchema
+    response_model=VerifyResponseSchema,
+    summary="Проверка кода верификации"
 )
 async def verify(
     verify: VerifyRequestSchema,
+    current_user_id: Annotated[UUID, Depends(get_current_user_id)],
     use_case: Annotated[VerifyUseCase, Depends(get_verify_use_case)],
     mapper: Annotated[VerifySchemaMapper, Depends(get_verify_schema_mapper)],
 ) -> VerifyResponseSchema:
     """Проверка кода верификации"""
     try:
-        dto = mapper.to_dto(verify)
+        dto = mapper.to_dto(verify, current_user_id)
+        print(dto)
         result = await use_case.execute(dto)
         return mapper.to_schema(result)
     except (RateLimitExceededError, ValidationError) as e:

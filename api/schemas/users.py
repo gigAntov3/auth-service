@@ -22,12 +22,12 @@ class UserBaseSchema(BaseModel):
 
 class UserUpdateSchema(BaseModel):
     """Схема для обновления пользователя"""
-    first_name: Optional[str] = None
-    last_name: Optional[str] = None
-    email: Optional[EmailStr] = None
-    phone: Optional[str] = None
-    birthday: Optional[date] = None
-    gender: Optional[str] = None
+    first_name: Optional[str] = Field(default=None, description="Имя пользователя", examples=["Alice"])
+    last_name: Optional[str] = Field(default=None, description="Фамилия пользователя", examples=["Smith"])
+    email: Optional[EmailStr] = Field(default=None, description="Email пользователя", examples=["alice@example.com"])
+    phone: Optional[str] = Field(default=None, description="Номер телефона пользователя", examples=["+79999999999"])
+    birthday: Optional[date] = Field(default=None, description="Дата рождения пользователя", examples=["2000-01-01"])
+    gender: Optional[str] = Field(default=None, description="Пол пользователя", examples=["male", "female"])
     
     class Config:
         extra = "forbid"
@@ -40,7 +40,6 @@ class UserSchema(UserBaseSchema, UUIDMixin, TimestampSchema):
 
 class UserPublicSchema(UUIDMixin, TimestampSchema):
     """Публичная информация о пользователе"""
-    id: UUID = Field(..., description="Уникальный идентификатор")
     first_name: str = Field(..., description="Имя пользователя")
     last_name: str = Field(..., description="Фамилия пользователя")
     email: EmailStr = Field(..., description="Email пользователя")

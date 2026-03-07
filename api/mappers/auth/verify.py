@@ -1,3 +1,5 @@
+from uuid import UUID
+
 from application.dtos.verification import (
     VerifyRequestDTO,
     VerifyResponseDTO
@@ -9,8 +11,9 @@ from api.schemas.verification import (
 
 
 class VerifySchemaMapper:
-    def to_dto(self, schema: VerifyRequestSchema) -> VerifyRequestDTO:
+    def to_dto(self, schema: VerifyRequestSchema, current_user_id: UUID) -> VerifyRequestDTO:
         return VerifyRequestDTO(
+            current_user_id=current_user_id,
             email=schema.email,
             phone=schema.phone,
             code=schema.code

@@ -60,7 +60,7 @@ class VerificationCodeEntity(BaseModel):
             id=uuid4(),
             user_id=user_id,
             identifier=identifier,
-            type=VerificationType(type),
+            type=type,
             code=VerificationCodeEntity._generate_verification_code(),
             expires_at=datetime.utcnow() + timedelta(minutes=15),
             created_at=datetime.utcnow(),

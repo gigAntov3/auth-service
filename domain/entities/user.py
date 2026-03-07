@@ -122,15 +122,11 @@ class UserEntity:
     
     def verify_email(self) -> None:
         """Подтверждение email"""
-        if self.is_email_verified:
-            return
         self.is_email_verified = True
         self.updated_at = datetime.utcnow()
     
     def verify_phone(self) -> None:
         """Подтверждение телефона"""
-        if self.is_phone_verified:
-            return
         self.is_phone_verified = True
         self.updated_at = datetime.utcnow()
     

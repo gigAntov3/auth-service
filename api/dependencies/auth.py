@@ -1,16 +1,14 @@
-from typing import Optional, Annotated
+from typing import Annotated
 from uuid import UUID
 
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
-from pydantic import BaseModel
 
 from infrastructure.security.jwt_service import JWTTokenService
 from infrastructure.security.password_hasher import BcryptPasswordHasher
 from infrastructure.services.email_service import MockEmailService
 from infrastructure.services.sms_service import MockSMSService
 from infrastructure.database.unit_of_work import SQLAlchemyUnitOfWork
-from infrastructure.database.session import db_manager
 from application.exceptions import InvalidTokenError
 
 from api.dependencies.base import (
@@ -223,7 +221,7 @@ async def get_current_user(
 async def get_refresh_token(
     credentials: Annotated[HTTPAuthorizationCredentials, Depends(security)],
     token_service: Annotated[JWTTokenService, Depends(get_token_service)],
-) -> UUID:
+) -> str:
 
     token = credentials.credentials
 

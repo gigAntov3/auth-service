@@ -24,7 +24,7 @@ router = APIRouter()
 @router.post(
     "/current",
     response_model=UserSchema,
-    summary="Получение информации о текущем пользователе"
+    summary="Обновление информации о текущем пользователе"
 )
 async def update_current_user(
     update: UserUpdateSchema,
@@ -33,7 +33,7 @@ async def update_current_user(
     mapper: Annotated[UserUpdateSchemaMapper, Depends(get_user_update_schema_mapper)],
 ) -> UserSchema:
     """
-    Получение информации о текущем аутентифицированном пользователе.
+    Обновление информации о текущем пользователе
     """
     # try:
     print("\n\n\n\n")
