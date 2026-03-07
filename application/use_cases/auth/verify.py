@@ -67,13 +67,26 @@ class VerifyUseCase:
                     "No pending verification code found. Please request a new code."
                 )
             
-            # Проверка кода верификации с сохранением состояния в случае ошибки
+            # Сохраняем текущее количество попыток для проверки
+            attempts_before = verification_code.attempts_count
+            
+            # Проверяем код (метод verify сам должен увеличить счетчик попыток)
             try:
                 verification_code.verify(dto.code)
             except Exception as e:
+                # Если метод verify уже увеличил счетчик, сохраняем изменения
+                if verification_code.attempts_count == attempts_before:
+                    # Если метод verify не увеличил счетчик, увеличиваем его здесь
+                    verification_code.increment_attempts_count()
+                
                 await self.uow.verification.save(verification_code)
                 await self.uow.commit()
                 raise e
+            
+            # Если код верный, проверяем что счетчик попыток увеличился
+            if verification_code.attempts_count == attempts_before:
+                # Если метод verify не увеличил счетчик при успехе, увеличиваем здесь
+                verification_code.increment_attempts_count()
             
             verification_type = VerificationType.EMAIL if dto.email else VerificationType.PHONE
             

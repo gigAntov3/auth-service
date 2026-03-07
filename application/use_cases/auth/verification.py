@@ -27,12 +27,20 @@ class VerificationUseCase:
         async with self.uow:
 
             if dto.email:
+                user = await self.uow.users.get_by_email(dto.email)
+                if user.is_email_verified:
+                    raise ValidationError("Email already verified")
+                
                 verification_code = VerificationCodeEntity.create(
                     user_id=dto.current_user_id,
                     identifier=dto.email,
                     type=VerificationType.EMAIL,
                 )
             elif dto.phone:
+                user = await self.uow.users.get_by_phone(dto.phone)
+                if user.is_phone_verified:
+                    raise ValidationError("Phone already verified")
+                
                 verification_code = VerificationCodeEntity.create(
                     user_id=dto.current_user_id,
                     identifier=dto.phone,

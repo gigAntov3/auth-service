@@ -53,7 +53,7 @@ class UserMapper:
     @staticmethod
     def update_model(entity: UserEntity, model: UserModel) -> UserModel:
         model.email = entity.email.value
-        model.phone = entity.phone.value
+        model.phone = entity.phone.value if entity.phone else None
         model.password_hash = entity.password_hash.value
         model.first_name = entity.first_name
         model.last_name = entity.last_name

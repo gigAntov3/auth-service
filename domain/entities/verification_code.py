@@ -61,7 +61,7 @@ class VerificationCodeEntity(BaseModel):
             user_id=user_id,
             identifier=identifier,
             type=type,
-            code=VerificationCodeEntity._generate_verification_code(),
+            code=cls._generate_verification_code(),
             expires_at=datetime.utcnow() + timedelta(minutes=15),
             created_at=datetime.utcnow(),
             status=VerificationStatus.PENDING,
@@ -80,34 +80,42 @@ class VerificationCodeEntity(BaseModel):
         """Проверка, использован ли код."""
         return self.status == VerificationStatus.CONFIRMED
     
+    def increment_attempts_count(self):
+        self.attempts_count += 1
+        
     def can_attempt(self) -> bool:
         """Можно ли попробовать ввести код (не превышен ли лимит попыток)."""
         return self.attempts_count < self.max_attempts and not self.is_expired() and not self.is_used()
     
-    def verify(self, input_code: str) -> bool:
+    def verify(self, input_code: str) -> None:
         """
         Проверка введенного кода.
         Содержит бизнес-правила: проверка попыток, срока действия, совпадения кода.
+        Выбрасывает исключения при ошибках.
         """
+        # Проверка на использование
         if self.is_used():
             raise DomainException("Код уже был использован")
         
+        # Проверка на истечение срока
         if self.is_expired():
             self.status = VerificationStatus.EXPIRED
             raise DomainException("Срок действия кода истек")
         
+        # Проверка на превышение попыток
         if not self.can_attempt():
             raise DomainException("Превышено количество попыток ввода")
         
         # Увеличиваем счетчик попыток
         self.attempts_count += 1
         
-        if self.code == input_code:
-            self.status = VerificationStatus.CONFIRMED
-            self.confirmed_at = datetime.utcnow()
-            return True
+        # Проверка кода
+        if self.code != input_code:
+            raise DomainException("Неверный код верификации")
         
-        return False
+        # Код верный - подтверждаем
+        self.status = VerificationStatus.CONFIRMED
+        self.confirmed_at = datetime.utcnow()
     
     @staticmethod
     def _generate_verification_code() -> str:
@@ -118,7 +126,7 @@ class VerificationCodeEntity(BaseModel):
         if self.is_used():
             raise DomainException("Нельзя обновить уже подтвержденный код")
         
-        self.code = VerificationCodeEntity._generate_verification_code()
+        self.code = self._generate_verification_code()
         self.expires_at = datetime.utcnow() + timedelta(minutes=15)
         self.attempts_count = 0
         self.status = VerificationStatus.PENDING

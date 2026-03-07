@@ -63,40 +63,10 @@ async def request_verification_code(
     - Код действителен в течение 10 минут
     """
     try:
-        # Валидация входных данных
-        if not verification_data.email and not verification_data.phone:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Необходимо указать email или телефон для верификации"
-            )
-        
-        if verification_data.email and verification_data.phone:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Укажите только один способ верификации: email или телефон"
-            )
-        
-        # Дополнительная валидация формата
-        if verification_data.email and "@" not in verification_data.email:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Некорректный формат email"
-            )
-        
-        if verification_data.phone and not verification_data.phone.startswith("+"):
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Номер телефона должен быть в международном формате (начинаться с +)"
-            )
-        
-        # Получение IP для rate limiting (если нужно)
-        client_ip = request.client.host if request.client else None
-        
         # Преобразование и выполнение
         dto = mapper.to_dto(
             verification_data, 
             current_user_id,
-            client_ip=client_ip  # Передаем IP для rate limiting
         )
         result = await use_case.execute(dto)
         

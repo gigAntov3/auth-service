@@ -121,9 +121,7 @@ class AuthUseCaseDependencies:
     @staticmethod
     def verify(
         uow: Annotated[SQLAlchemyUnitOfWork, Depends(get_unit_of_work)],
-        token_service: Annotated[JWTTokenService, Depends(get_token_service)],
     ) -> VerifyUseCase:
         return VerifyUseCase(
             uow=uow,
-            token_service=token_service,
         )
